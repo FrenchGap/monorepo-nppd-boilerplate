@@ -1,6 +1,7 @@
 volumes:
   nppd-db-data:
-  nppd-node_modules:
+  nppd-frontend-node_modules:
+  nppd-backend-node_modules:
 
 services:
   nppd-db:
@@ -29,4 +30,19 @@ services:
     ports:
       - "${FRONTEND_PORT_EXTERNAL}:3000"
     volumes:
-      - nppd-node_modules:/app/node_modules
+      - nppd-frontend-node_modules:/app/node_modules
+
+  nppd-backend:
+    container_name: nppd-backend
+    build:
+      context: .
+      dockerfile: ./apps/backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - nppd-db
+    environment:
+      TZ: "Europe/Paris"
+    ports:
+      - "${BACKEND_PORT_EXTERNAL}:3000"
+    volumes:
+      - nppd-backend-node_modules:/app/node_modules
